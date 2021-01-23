@@ -31,7 +31,7 @@ eq_relation<T>::eq_relation(std::size_t size)
 }
 
 template<std::unsigned_integral T = default_T>
-eq_relation<T> universal_relation(std::size_t size)
+[[nodiscard]] eq_relation<T> universal_relation(std::size_t size)
 {
 	eq_relation<T> result(size);
 	
@@ -96,9 +96,49 @@ bool eq_relation<T>::operator==(const eq_relation& S) const
 
 /*
 std::partial_ordering operator<=>(const eq_relation& S) const;
+*/
 
-std::vector<eq_relation> enumerate(std::size_t size);
+template<std::unsigned_integral T = default_T>
+[[nodiscard]] std::vector<eq_relation<T>> enumerate(std::size_t size)
+{
+	std::vector<eq_relation<T>> result;
+	
+	if (size == 0)
+	{
+		// Only one of size 0
+		result.emplace_back();
+	}
+	else
+	{
+		const auto smallerERs = enumerate(size - 1);
+		
+		for (const auto& R : smallerERs)
+		{
+			// For each group in R, there will be a new ER
+			// with the last member merged with that group.
+			for (unsigned i = 0; i < size - 1; ++i)
+			{
+				// Since we are looking for the unique groups,
+				// just look for the leaders.
+				if (R.elements[i].boss == i)
+				{
+					// Add a copy of R, and add an element.
+					result.emplace_back(R).append_element();
+					
+					// Make the new element equivalent to element i.
+					result.back().merge(i,size - 1);
+				}
+			}
+			
+			// The last option is to have on element not equivalent to anything.
+			result.emplace_back(R).append_element();
+		}
+	}
+	
+	return result;
+}
 
+/*
 eq_relation reverse() const;
 
 eq_relation operator+(const eq_relation& S) const;
@@ -178,7 +218,7 @@ void eq_relation<T>::updateCGL() const
 	}
 }
 
-constexpr std::size_t bell(std::size_t n)
+[[nodiscard]] constexpr std::size_t bell(std::size_t n)
 {
 	// List from https://oeis.org/A000110
 	std::size_t table[] {

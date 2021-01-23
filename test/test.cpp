@@ -135,4 +135,17 @@ int main()
 	std::cout << er1 << '\n'; // 0 0 1
 	assert(er1.n_groups() == 2);
 	}
+	
+	// Testing enumeration
+	{
+		const auto ers_5 = cpeq::enumerate(5);
+		
+		assert(ers_5.size() == cpeq::bell(5));
+		
+		// 52 of these
+		for (const auto& er : ers_5)
+		{
+			std::cout << er << '\n';
+		}
+	}
 }

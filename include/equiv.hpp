@@ -36,7 +36,7 @@ struct eq_relation
 	// Returns the universal relation of a given size, where
 	// all elements are equivalent to each other.
 	template<std::unsigned_integral t>
-	friend eq_relation<t> universal_relation(std::size_t size);
+	[[nodiscard]] friend eq_relation<t> universal_relation(std::size_t size);
 	
 	// Sets the elements at indexes x and y to be equivalent.
 	// (merges two groups together). Has no effect if x and y are
@@ -113,6 +113,11 @@ struct eq_relation
 	// Returns the number of non-equivalent groups in R.
 	[[nodiscard]] T n_groups() const;
 	
+	// Returns all mutually non-equivalent ERs of a given size.
+	// Number of ERs is equal to bell(size).
+	template<std::unsigned_integral t>
+	[[nodiscard]] friend std::vector<eq_relation<t>> enumerate(std::size_t size);
+	
 	private:
 	
 	struct element;
@@ -134,11 +139,6 @@ struct eq_relation
 // Due to size restrictions, requires 0 <= n <= 25.
 // Implemented via lookup table.
 [[nodiscard]] constexpr std::size_t bell(std::size_t n);
-
-// Returns all mutually non-equivalent ERs of a given size.
-// Number of ERs is equal to bell(size).
-template<std::unsigned_integral T = default_T>
-[[nodiscard]] std::vector<eq_relation<T>> enumerate(std::size_t size);
 
 #include "equiv.tpp"
 }
