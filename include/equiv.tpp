@@ -78,9 +78,13 @@ bool eq_relation<T>::equivalent(std::size_t x, std::size_t y) const
 	return leader(x) == leader(y);
 }
 
-/*
-void append_element();
-*/
+template<std::unsigned_integral T>
+void eq_relation<T>::append_element()
+{
+	elements.emplace_back(1,elements.size());
+	++_n_groups;
+	changed = true;
+}
 
 template<std::unsigned_integral T>
 bool eq_relation<T>::operator==(const eq_relation& S) const
@@ -174,7 +178,7 @@ void eq_relation<T>::updateCGL() const
 	}
 }
 
-std::size_t bell(std::size_t n)
+constexpr std::size_t bell(std::size_t n)
 {
 	// List from https://oeis.org/A000110
 	std::size_t table[] {

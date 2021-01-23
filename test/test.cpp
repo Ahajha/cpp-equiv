@@ -118,4 +118,21 @@ int main()
 	// Test equivalence
 	assert(er1 == univ);
 	}
+	
+	{
+	// Test adding elements
+	
+	cpeq::eq_relation er1, er2(1);
+	
+	er1.append_element();
+	
+	assert(er1 == er2);
+	
+	er1.append_element();
+	er1.merge(0,1);
+	er1.append_element();
+	
+	std::cout << er1 << '\n'; // 0 0 1
+	assert(er1.n_groups() == 2);
+	}
 }
