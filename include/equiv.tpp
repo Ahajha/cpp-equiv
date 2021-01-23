@@ -116,7 +116,7 @@ template<std::unsigned_integral T = default_T>
 		{
 			// For each group in R, there will be a new ER
 			// with the last member merged with that group.
-			for (unsigned i = 0; i < size - 1; ++i)
+			for (T i = 0; i < size - 1; ++i)
 			{
 				// Since we are looking for the unique groups,
 				// just look for the leaders.
@@ -143,8 +143,9 @@ eq_relation<T> eq_relation<T>::reverse() const
 {
 	const std::size_t n = elements.size(); // for brevity
 	eq_relation result;
+	result.elements.reserve(n);
 	
-	for (unsigned i = 0; i < n; ++i)
+	for (T i = 0; i < n; ++i)
 	{
 		result.elements.emplace_back(
 			elements[n - i - 1].n_group_members, n - leader(n - i - 1) - 1
@@ -158,11 +159,34 @@ eq_relation<T> eq_relation<T>::reverse() const
 	return result;
 }
 
+template<std::unsigned_integral T>
+eq_relation<T> eq_relation<T>::operator+(const eq_relation& S) const
+{
+	eq_relation result(*this);
+	return result += S;
+}
+
+template<std::unsigned_integral T>
+eq_relation<T>& eq_relation<T>::operator+=(const eq_relation& S)
+{
+	const std::size_t old_size = size();
+	
+	elements.reserve(old_size + S.size());
+	
+	for (const auto& elem : S.elements)
+	{
+		elements.emplace_back(elem.n_group_members, elem.boss + old_size);
+	}
+	_n_groups += S._n_groups;
+	
+	// The CGL could be determined easily, but it relies on R and S
+	// having accurate CGLs already.
+	changed = true;
+	
+	return *this;
+}
+
 /*
-eq_relation operator+(const eq_relation& S) const;
-
-eq_relation& operator+=(const eq_relation& S);
-
 eq_relation operator-(std::size_t size) const;
 
 eq_relation& operator-=(std::size_t size);

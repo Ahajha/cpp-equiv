@@ -174,4 +174,31 @@ int main()
 		assert(er3.reverse() == er4);
 		assert(er3 == er4.reverse());
 	}
+	
+	// Testing + and +=
+	{
+		cpeq::eq_relation er1(2);
+		
+		assert(er1 + er1 == cpeq::eq_relation(4));
+		
+		er1.merge(0,1);
+		
+		cpeq::eq_relation er2(4);
+		
+		er2.merge(0,1);
+		er2.merge(2,3);
+		
+		assert(er1 + er1 == er2);
+		
+		er1 += cpeq::eq_relation(1);
+		
+		cpeq::eq_relation er3(6);
+		
+		er3.merge(1,2);
+		er3.merge(4,3);
+		
+		assert(er1.reverse() + er1 == er3);
+		
+		assert(er3 + cpeq::eq_relation() == er3);
+	}
 }
