@@ -131,7 +131,9 @@ struct eq_relation
 };
 
 // Returns the nth Bell number.
-[[nodiscard]] std::size_t bell(std::size_t n);
+// Due to size restrictions, requires 0 <= n <= 25.
+// Implemented via lookup table.
+[[nodiscard]] constexpr std::size_t bell(std::size_t n);
 
 // Returns all mutually non-equivalent ERs of a given size.
 // Number of ERs is equal to bell(size).

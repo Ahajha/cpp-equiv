@@ -93,8 +93,6 @@ bool eq_relation<T>::operator==(const eq_relation& S) const
 /*
 std::partial_ordering operator<=>(const eq_relation& S) const;
 
-std::size_t bell(std::size_t n);
-
 std::vector<eq_relation> enumerate(std::size_t size);
 
 eq_relation reverse() const;
@@ -174,4 +172,17 @@ void eq_relation<T>::updateCGL() const
 		cgl[i] = cgl[lead];
 		filled[i] = true;
 	}
+}
+
+std::size_t bell(std::size_t n)
+{
+	// List from https://oeis.org/A000110
+	std::size_t table[] {
+		1,1,2,5,15,52,203,877,4140,21147,115975,678570,4213597,27644437,
+		190899322,1382958545,10480142147,82864869804,682076806159,5832742205057,
+		51724158235372,474869816156751,4506715738447323,44152005855084346,
+		445958869294805289,4638590332229999353
+	};
+
+	return table[n];
 }
