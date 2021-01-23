@@ -55,17 +55,66 @@ eq_relation& operator+=(const eq_relation& S);
 [[nodiscard]] eq_relation  operator- (std::size_t size) const;
 
 eq_relation& operator-=(std::size_t size);
+*/
 
-[[nodiscard]] const std::vector<T>& canonical_group_labeling() const;
+template<std::unsigned_integral T>
+const std::vector<T>& eq_relation<T>::canonical_group_labeling() const
+{
+	if (changed)
+	{
+		updateCGL();
+		changed = false;
+	}
+	
+	return cgl;
+}
 
-template<std::unsigned_integral t>
-friend std::ostream& operator<<(std::ostream&, const eq_relation<t>&);
+template<std::unsigned_integral T>
+std::ostream& operator<<(std::ostream& stream, const eq_relation<T>& R)
+{
+	const auto& cgl = R.canonical_group_labeling();
+	
+	for (unsigned label : cgl) stream << label << ' ';
+	
+	return stream << '\b';
+}
 
+/*
 [[nodiscard]] unsigned size() const;
 
 [[nodiscard]] unsigned n_groups() const;
-
-unsigned leader(unsigned) const;
-
-void updateCGL() const;
 */
+
+template<std::unsigned_integral T>
+T eq_relation<T>::leader(T x) const
+{
+	if (elements[x].boss == x) return x;
+	
+	return (elements[x].boss = leader(elements[x].boss));
+}
+
+template<std::unsigned_integral T>
+void eq_relation<T>::updateCGL() const
+{
+	// This is possible if this ER was constructed 'manually'
+	if (cgl.size() != elements.size()) cgl.resize(elements.size());
+	
+	std::vector<bool> filled(elements.size());
+	
+	unsigned group_num = 0;
+	for (unsigned i = 0; i < elements.size(); ++i)
+	{
+		// If an element has already been marked, then it is
+		// a leader, we can ignore this case and just let it
+		// get overwritten again.
+		
+		unsigned lead = leader(i);
+		if (!filled[lead])
+		{
+			cgl[lead] = group_num++;
+			filled[lead] = true;
+		}
+		cgl[i] = cgl[lead];
+		filled[i] = true;
+	}
+}
