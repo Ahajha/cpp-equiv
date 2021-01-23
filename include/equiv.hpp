@@ -96,8 +96,15 @@ struct eq_relation
 	// Returns the canonical group labeling (CGL) of R.
 	//
 	// The CGL of R, C, is defined to be a list of R.size() indexes,
-	// where for each valid index x, C[x] is the smallest index y such
-	// that R.equivalent(x,y).
+	// where for each valid index x, C[x] is the group number of element x.
+	// Index 0 is always group 0, and each new group encountered in ascending
+	// order of index is given a group label one higher.
+	//
+	// Examples:
+	// In an ER with 5 elements with the second and last
+	// elements merged, the CGL is 0 1 2 3 1.
+	// In an ER with 6 elements with the first two, middle two, and last
+	// two elements each forming a group, the CGL is 0 0 1 1 2 2.
 	[[nodiscard]] const std::vector<T>& canonical_group_labeling() const;
 	
 	// Prints the canonical group labeling of R to an output stream.

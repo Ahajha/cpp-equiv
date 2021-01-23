@@ -5,7 +5,8 @@
 template<std::unsigned_integral T>
 struct eq_relation<T>::element
 {
-	// If this element is a leader, this is the number of members in the group.
+	// If this element is a leader, this is the number
+	// of members in the group, otherwise undefined.
 	T n_group_members;
 	
 	// Index of the element that it 'points' to to see which group it is in.
@@ -23,7 +24,7 @@ eq_relation<T>::eq_relation(std::size_t size)
 	
 	for (unsigned i = 0; i < size; ++i)
 	{
-		// Start with each element 
+		// Start with each element in its own group
 		elements.emplace_back(1,i);
 		cgl.emplace_back(i);
 	}
@@ -31,28 +32,56 @@ eq_relation<T>::eq_relation(std::size_t size)
 
 /*
 eq_relation universal_relation(std::size_t size);
+*/
 
-[[nodiscard]] element& operator[](std::size_t i);
+template<std::unsigned_integral T>
+void eq_relation<T>::merge(std::size_t x, std::size_t y)
+{
+	T leadX = leader(x), leadY = leader(y);
+	
+	// No action needed if they are in the same group.
+	if (leadX != leadY)
+	{
+		// Prefer to demote leaders with smaller groups
+		if (elements[leadX].n_group_members < elements[leadY].n_group_members)
+		{
+			elements[leadY].n_group_members += elements[leadX].n_group_members;
+			elements[leadX].boss = leadY;
+		}
+		else
+		{
+			elements[leadX].n_group_members += elements[leadY].n_group_members;
+			elements[leadY].boss = leadX;
+		}
+		changed = true;
+		--_n_groups;
+	}
+}
 
-[[nodiscard]] const element& operator[](std::size_t i) const;
+template<std::unsigned_integral T>
+bool eq_relation<T>::equivalent(std::size_t x, std::size_t y) const
+{
+	return leader(x) == leader(y);
+}
 
+/*
 void append_element();
 
-[[nodiscard]] bool operator==(const eq_relation& S) const;
+bool operator==(const eq_relation& S) const;
 
-[[nodiscard]] std::partial_ordering operator<=>(const eq_relation& S) const;
+std::partial_ordering operator<=>(const eq_relation& S) const;
 
-[[nodiscard]] static std::size_t bell(std::size_t n);
+std::size_t bell(std::size_t n);
 
-[[nodiscard]] static std::vector<eq_relation> enumerate(std::size_t size);
+std::vector<eq_relation> enumerate(std::size_t size);
 
-[[nodiscard]] eq_relation reverse() const;
+eq_relation reverse() const;
 
-[[nodiscard]] eq_relation  operator+ (const eq_relation& S) const;
+eq_relation operator+(const eq_relation& S) const;
 
 eq_relation& operator+=(const eq_relation& S);
 
-[[nodiscard]] eq_relation  operator- (std::size_t size) const;
+eq_relation operator-(std::size_t size) const;
 
 eq_relation& operator-=(std::size_t size);
 */
@@ -79,11 +108,17 @@ std::ostream& operator<<(std::ostream& stream, const eq_relation<T>& R)
 	return stream << '\b';
 }
 
-/*
-[[nodiscard]] unsigned size() const;
+template<std::unsigned_integral T>
+std::size_t eq_relation<T>::size() const
+{
+	return elements.size();
+}
 
-[[nodiscard]] unsigned n_groups() const;
-*/
+template<std::unsigned_integral T>
+T eq_relation<T>::n_groups() const
+{
+	return _n_groups;
+}
 
 template<std::unsigned_integral T>
 T eq_relation<T>::leader(T x) const
