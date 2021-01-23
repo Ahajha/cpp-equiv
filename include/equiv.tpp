@@ -138,9 +138,27 @@ template<std::unsigned_integral T = default_T>
 	return result;
 }
 
-/*
-eq_relation reverse() const;
+template<std::unsigned_integral T>
+eq_relation<T> eq_relation<T>::reverse() const
+{
+	const std::size_t n = elements.size(); // for brevity
+	eq_relation result;
+	
+	for (unsigned i = 0; i < n; ++i)
+	{
+		result.elements.emplace_back(
+			elements[n - i - 1].n_group_members, n - leader(n - i - 1) - 1
+		);
+	}
+	result._n_groups = _n_groups;
+	
+	// CGL is non-trivial to determine, so regenerate it normally.
+	result.changed = true;
+	
+	return result;
+}
 
+/*
 eq_relation operator+(const eq_relation& S) const;
 
 eq_relation& operator+=(const eq_relation& S);

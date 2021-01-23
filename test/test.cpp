@@ -142,10 +142,36 @@ int main()
 		
 		assert(ers_5.size() == cpeq::bell(5));
 		
-		// 52 of these
+		std::cout << "All 52 5-element ERs:\n";
 		for (const auto& er : ers_5)
 		{
 			std::cout << er << '\n';
 		}
+	}
+	
+	// Testing reverse
+	{
+		cpeq::eq_relation er1(5), er2(5), er3(7), er4(7);
+		
+		assert(er1 == er1.reverse());
+		
+		er1.merge(0,1);
+		er2.merge(3,4);
+		
+		assert(er1 == er2.reverse());
+		assert(er1.reverse() == er2);
+		
+		assert(er1.reverse().n_groups() == 4);
+		
+		er3.merge(1,2);
+		er3.merge(3,5);
+		er3.merge(5,6);
+		
+		er4.merge(0,1);
+		er4.merge(0,3);
+		er4.merge(4,5);
+		
+		assert(er3.reverse() == er4);
+		assert(er3 == er4.reverse());
 	}
 }
