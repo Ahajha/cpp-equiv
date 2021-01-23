@@ -24,7 +24,9 @@ T is the size of the indexes used internally, defaults to at most
 the element count in any way is undefined behavior.
 */
 
-template<std::unsigned_integral T = uint16_t>
+using default_T = uint16_t;
+
+template<std::unsigned_integral T = default_T>
 struct eq_relation
 {
 	// Constructs an equivalence relation of a given size,
@@ -33,7 +35,8 @@ struct eq_relation
 	
 	// Returns the universal relation of a given size, where
 	// all elements are equivalent to each other.
-	static eq_relation universal_relation(std::size_t size);
+	template<std::unsigned_integral t>
+	friend eq_relation<t> universal_relation(std::size_t size);
 	
 	// Sets the elements at indexes x and y to be equivalent.
 	// (merges two groups together). Has no effect if x and y are
@@ -65,13 +68,6 @@ struct eq_relation
 	// equal     -> same definition as above, equivalent to both R and S
 	//     being finer than the other.
 	[[nodiscard]] std::partial_ordering operator<=>(const eq_relation& S) const;
-	
-	// Returns the nth Bell number.
-	[[nodiscard]] static std::size_t bell(std::size_t n);
-	
-	// Returns all mutually non-equivalent ERs of a given size.
-	// Number of ERs is equal to bell(size).
-	[[nodiscard]] static std::vector<eq_relation> enumerate(std::size_t size);
 	
 	// Returns the reverse of this relation.
 	// If R_rev is the reversal of R, and n is the size of R, then for all
@@ -133,6 +129,14 @@ struct eq_relation
 	
 	void updateCGL() const;
 };
+
+// Returns the nth Bell number.
+[[nodiscard]] std::size_t bell(std::size_t n);
+
+// Returns all mutually non-equivalent ERs of a given size.
+// Number of ERs is equal to bell(size).
+template<std::unsigned_integral T = default_T>
+[[nodiscard]] std::vector<eq_relation<T>> enumerate(std::size_t size);
 
 #include "equiv.tpp"
 }

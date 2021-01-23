@@ -95,5 +95,23 @@ int main()
 			assert(er1.equivalent(i,j));
 		}
 	}
+	
+	// Test universal relations
+	auto univ = cpeq::universal_relation(5);
+	
+	std::cout << univ << '\n'; // 0 0 0 0 0
+	assert(univ.n_groups() == 1);
+	
+	for (unsigned i = 0; i < univ.size(); ++i)
+	{
+		for (unsigned j = 0; j < univ.size(); ++j)
+		{
+			// All elements are equivalent.
+			assert(univ.equivalent(i,j));
+		}
+	}
+	
+	// Test equivalence
+	assert(er1 == univ);
 	}
 }

@@ -22,7 +22,7 @@ eq_relation<T>::eq_relation(std::size_t size)
 	elements.reserve(size);
 	cgl.reserve(size);
 	
-	for (unsigned i = 0; i < size; ++i)
+	for (T i = 0; i < size; ++i)
 	{
 		// Start with each element in its own group
 		elements.emplace_back(1,i);
@@ -30,9 +30,23 @@ eq_relation<T>::eq_relation(std::size_t size)
 	}
 }
 
-/*
-eq_relation universal_relation(std::size_t size);
-*/
+template<std::unsigned_integral T = default_T>
+eq_relation<T> universal_relation(std::size_t size)
+{
+	eq_relation<T> result(size);
+	
+	// Arbitrarily choose 0 as the universal leader,
+	// everything else should be updated to this.
+	for (std::size_t i = 1; i < size; ++i)
+	{
+		result.elements[i].boss = 0;
+		result.cgl[i] = 0;
+	}
+	result._n_groups = 1;
+	result.elements[0].n_group_members = size;
+	
+	return result;
+}
 
 template<std::unsigned_integral T>
 void eq_relation<T>::merge(std::size_t x, std::size_t y)
@@ -66,9 +80,17 @@ bool eq_relation<T>::equivalent(std::size_t x, std::size_t y) const
 
 /*
 void append_element();
+*/
 
-bool operator==(const eq_relation& S) const;
+template<std::unsigned_integral T>
+bool eq_relation<T>::operator==(const eq_relation& S) const
+{
+	if (elements.size() != S.elements.size()) return false;
+	
+	return canonical_group_labeling() == S.canonical_group_labeling();
+}
 
+/*
 std::partial_ordering operator<=>(const eq_relation& S) const;
 
 std::size_t bell(std::size_t n);
@@ -103,7 +125,7 @@ std::ostream& operator<<(std::ostream& stream, const eq_relation<T>& R)
 {
 	const auto& cgl = R.canonical_group_labeling();
 	
-	for (unsigned label : cgl) stream << label << ' ';
+	for (std::size_t label : cgl) stream << label << ' ';
 	
 	return stream << '\b';
 }
@@ -136,14 +158,14 @@ void eq_relation<T>::updateCGL() const
 	
 	std::vector<bool> filled(elements.size());
 	
-	unsigned group_num = 0;
-	for (unsigned i = 0; i < elements.size(); ++i)
+	T group_num = 0;
+	for (std::size_t i = 0; i < elements.size(); ++i)
 	{
 		// If an element has already been marked, then it is
 		// a leader, we can ignore this case and just let it
 		// get overwritten again.
 		
-		unsigned lead = leader(i);
+		T lead = leader(i);
 		if (!filled[lead])
 		{
 			cgl[lead] = group_num++;
