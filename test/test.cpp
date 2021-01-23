@@ -67,7 +67,11 @@ int main()
 	}
 	
 	// This merge should have no effect.
+	auto er1_copy = er1;
+	
 	er1.merge(3,4);
+	
+	assert(er1 == er1_copy);
 	
 	std::cout << er1 << '\n'; // 0 1 1 1 1
 	assert(er1.n_groups() == 2);
