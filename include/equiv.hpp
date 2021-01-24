@@ -62,10 +62,10 @@ struct eq_relation
 	//
 	// If R and S are different sizes, behavior is undefined.
 	//
-	// less      -> R is finer than S
-	// greater   -> S is finer than R (equivalently, R is coarser than S)
-	// unordered -> neither R nor S are finer than the other.
-	// equal     -> same definition as above, equivalent to both R and S
+	// less       -> R is finer than S
+	// greater    -> S is finer than R (equivalently, R is coarser than S)
+	// unordered  -> neither R nor S are finer than the other.
+	// equivalent -> same definition as above, equivalent to both R and S
 	//     being finer than the other.
 	[[nodiscard]] std::partial_ordering operator<=>(const eq_relation& S) const;
 	
@@ -133,6 +133,8 @@ struct eq_relation
 	mutable bool changed;
 	
 	void updateCGL() const;
+	
+	bool finer_than(const eq_relation& S) const;
 };
 
 // Returns the nth Bell number.

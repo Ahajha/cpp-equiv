@@ -251,4 +251,30 @@ int main()
 	// (random index used)
 	assert(ers_5[45] - 0 == ers_5[45]);
 	}
+	
+	// Test fine-ness comparisons
+	{
+	cpeq::eq_relation er1(5), er2(5);
+	
+	assert(er1 <=> er2 == std::partial_ordering::equivalent);
+	
+	er2.merge(3,4);
+	
+	assert(er1 < er2);
+	
+	er1.merge(3,4);
+	
+	assert(er1 <=> er2 == std::partial_ordering::equivalent);
+	
+	er1.merge(0,1);
+	
+	assert(er1 > er2);
+	
+	assert(er1 < cpeq::universal_relation(5));
+	assert(er2 < cpeq::universal_relation(5));
+	
+	er2.merge(2,3);
+	
+	assert(er1 <=> er2 == std::partial_ordering::unordered);
+	}
 }

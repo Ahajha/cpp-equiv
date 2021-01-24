@@ -94,9 +94,22 @@ bool eq_relation<T>::operator==(const eq_relation& S) const
 	return canonical_group_labeling() == S.canonical_group_labeling();
 }
 
-/*
-std::partial_ordering operator<=>(const eq_relation& S) const;
-*/
+template<std::unsigned_integral T>
+std::partial_ordering eq_relation<T>::operator<=>(const eq_relation& S) const
+{
+	if (finer_than(S))
+	{
+		return S.finer_than(*this)
+			? std::partial_ordering::equivalent
+			: std::partial_ordering::less;
+	}
+	else
+	{
+		return S.finer_than(*this)
+			? std::partial_ordering::greater
+			: std::partial_ordering::unordered;
+	}
+}
 
 template<std::unsigned_integral T = default_T>
 [[nodiscard]] std::vector<eq_relation<T>> enumerate(std::size_t size)
@@ -310,10 +323,40 @@ void eq_relation<T>::updateCGL() const
 	}
 }
 
+template<std::unsigned_integral T>
+bool eq_relation<T>::finer_than(const eq_relation& S) const
+{
+	// Basic idea of the algorithm: The groups in R should be
+	// subsets of groups in S.
+	
+	// If the number of groups in S is greater, then R cannot be finer.
+	if (_n_groups < S._n_groups) return false;
+	
+	// Maps group numbers in the first to group numbers in the second.
+	// The boolean is to flag if it has been set yet.
+	std::vector<std::pair<T,bool>> map(_n_groups, {0,false});
+	
+	const auto& cgl1 = canonical_group_labeling();
+	const auto& cgl2 = S.canonical_group_labeling();
+	
+	for (unsigned i = 0; i < size(); ++i)
+	{
+		// If this group has not been mapped to a group in the other set,
+		// map it. If it has but is different, return false.
+		if (!map[cgl1[i]].second)
+		{
+			map[cgl1[i]] = {cgl2[i],true};
+		}
+		else if (map[cgl1[i]].first != cgl2[i]) return false;
+	}
+	
+	return true;
+}
+
 [[nodiscard]] constexpr std::size_t bell(std::size_t n)
 {
 	// List from https://oeis.org/A000110
-	std::size_t table[] {
+	constexpr std::size_t table[] {
 		1,1,2,5,15,52,203,877,4140,21147,115975,678570,4213597,27644437,
 		190899322,1382958545,10480142147,82864869804,682076806159,5832742205057,
 		51724158235372,474869816156751,4506715738447323,44152005855084346,
