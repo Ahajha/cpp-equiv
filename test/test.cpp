@@ -138,67 +138,117 @@ int main()
 	
 	// Testing enumeration
 	{
-		const auto ers_5 = cpeq::enumerate(5);
-		
-		assert(ers_5.size() == cpeq::bell(5));
-		
-		std::cout << "All 52 5-element ERs:\n";
-		for (const auto& er : ers_5)
-		{
-			std::cout << er << '\n';
-		}
+	const auto ers_5 = cpeq::enumerate(5);
+	
+	assert(ers_5.size() == cpeq::bell(5));
+	
+	std::cout << "All 52 5-element ERs:\n";
+	for (const auto& er : ers_5)
+	{
+		std::cout << er << '\n';
+	}
 	}
 	
 	// Testing reverse
 	{
-		cpeq::eq_relation er1(5), er2(5), er3(7), er4(7);
-		
-		assert(er1 == er1.reverse());
-		
-		er1.merge(0,1);
-		er2.merge(3,4);
-		
-		assert(er1 == er2.reverse());
-		assert(er1.reverse() == er2);
-		
-		assert(er1.reverse().n_groups() == 4);
-		
-		er3.merge(1,2);
-		er3.merge(3,5);
-		er3.merge(5,6);
-		
-		er4.merge(0,1);
-		er4.merge(0,3);
-		er4.merge(4,5);
-		
-		assert(er3.reverse() == er4);
-		assert(er3 == er4.reverse());
+	cpeq::eq_relation er1(5), er2(5), er3(7), er4(7);
+	
+	assert(er1 == er1.reverse());
+	
+	er1.merge(0,1);
+	er2.merge(3,4);
+	
+	assert(er1 == er2.reverse());
+	assert(er1.reverse() == er2);
+	
+	assert(er1.reverse().n_groups() == 4);
+	
+	er3.merge(1,2);
+	er3.merge(3,5);
+	er3.merge(5,6);
+	
+	er4.merge(0,1);
+	er4.merge(0,3);
+	er4.merge(4,5);
+	
+	assert(er3.reverse() == er4);
+	assert(er3 == er4.reverse());
 	}
 	
 	// Testing + and +=
 	{
-		cpeq::eq_relation er1(2);
-		
-		assert(er1 + er1 == cpeq::eq_relation(4));
-		
-		er1.merge(0,1);
-		
-		cpeq::eq_relation er2(4);
-		
-		er2.merge(0,1);
-		er2.merge(2,3);
-		
-		assert(er1 + er1 == er2);
-		
-		er1 += cpeq::eq_relation(1);
-		
-		cpeq::eq_relation er3(6);
-		
-		er3.merge(1,2);
-		er3.merge(4,3);
-		
-		assert(er1.reverse() + er1 == er3);
-		
-		assert(er3 + cpeq::eq_relation() == er3);
+	cpeq::eq_relation er1(2);
+	
+	assert(er1 + er1 == cpeq::eq_relation(4));
+	
+	er1.merge(0,1);
+	
+	cpeq::eq_relation er2(4);
+	
+	er2.merge(0,1);
+	er2.merge(2,3);
+	
+	assert(er1 + er1 == er2);
+	
+	er1 += cpeq::eq_relation(1);
+	
+	cpeq::eq_relation er3(6);
+	
+	er3.merge(1,2);
+	er3.merge(4,3);
+	
+	assert(er1.reverse() + er1 == er3);
+	
+	// Appending an empty ER should have no effect.
+	assert(er3 + cpeq::eq_relation() == er3);
+	}
+	
+	// Testing - and -=
+	{
+	const auto ers_5 = cpeq::enumerate(5), ers_3 = cpeq::enumerate(3);
+	
+	// The first 5 elements of ers_5 have the same 3-long ER base
+	std::size_t i = 0;
+	for (; i < 5; ++i)
+	{
+		assert(ers_5[i] - 2 == ers_3[0]);
+	}
+	// Then the rest up to index 15
+	for (; i < 15; ++i)
+	{
+		assert(ers_5[i] - 2 == ers_3[1]);
+	}
+	// 25
+	for (; i < 25; ++i)
+	{
+		assert(ers_5[i] - 2 == ers_3[2]);
+	}
+	
+	// 35
+	for (; i < 35; ++i)
+	{
+		assert(ers_5[i] - 2 == ers_3[3]);
+	}
+	
+	// Rest
+	for (; i < 52; ++i)
+	{
+		assert(ers_5[i] - 2 == ers_3[4]);
+	}
+	
+	// (white box testing)
+	// Force a situation where a leader needs to be truncated
+	cpeq::eq_relation er1(5);
+	
+	er1.merge(3,4); // Either 3 or 4 is the leader
+	er1.merge(2,3); // 2 looks to either 3 or 4 as the leader
+	
+	er1 -= 2;
+	
+	assert(er1 == cpeq::eq_relation(3));
+	
+	// Removing nothing should have no effect.
+	// (random index used)
+	assert(ers_5[45] - 0 == ers_5[45]);
 	}
 }

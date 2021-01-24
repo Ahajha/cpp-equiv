@@ -186,11 +186,61 @@ eq_relation<T>& eq_relation<T>::operator+=(const eq_relation& S)
 	return *this;
 }
 
-/*
-eq_relation operator-(std::size_t size) const;
+template<std::unsigned_integral T>
+eq_relation<T> eq_relation<T>::operator-(std::size_t size) const
+{
+	eq_relation result(*this);
+	return result -= size;
+}
 
-eq_relation& operator-=(std::size_t size);
-*/
+template<std::unsigned_integral T>
+eq_relation<T>& eq_relation<T>::operator-=(std::size_t size)
+{
+	// Scan through the leaders of the elements being kept
+	const std::size_t new_size = elements.size() - size;
+	
+	T i = 0;
+	for (; i < new_size; ++i)
+	{
+		const T lead = leader(i);
+		
+		// If the leader is outside the new range, swap them so
+		// that the leader is within the range.
+		if (lead > new_size)
+		{
+			// Have the old leader point to the new one
+			elements[lead].boss = i;
+			
+			// Sets i to be its own leader as well as take n_group_members.
+			elements[i] = elements[lead];
+		}
+	}
+	
+	// Scan through the rest of the elements
+	for (; i < elements.size(); ++i)
+	{
+		const T lead = leader(i);
+		
+		// Reduce the number of elements from that leader
+		--elements[lead].n_group_members;
+		
+		// If the element is a leader, reduce the group count.
+		if (lead == i)
+		{
+			--_n_groups;
+		}
+	}
+	
+	elements.resize(new_size);
+	
+	// If the CGL is up to date, it can easily be updated by
+	// truncating it. Otherwise, let it be regenerated normally.
+	if (!changed)
+	{
+		cgl.resize(new_size);
+	}
+	return *this;
+}
 
 template<std::unsigned_integral T>
 const std::vector<T>& eq_relation<T>::canonical_group_labeling() const
