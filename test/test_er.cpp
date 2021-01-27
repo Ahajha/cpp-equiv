@@ -1,6 +1,6 @@
-#include "../include/equiv.hpp"
 #include <iostream>
 #include <cassert>
+#include <equiv_relation>
 
 int main()
 {

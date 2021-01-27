@@ -140,5 +140,5 @@ struct eq_relation
 // Implemented via lookup table.
 [[nodiscard]] constexpr std::size_t bell(std::size_t n);
 
-#include "equiv.tpp"
+#include "tpp/equiv_relation.tpp"
 }

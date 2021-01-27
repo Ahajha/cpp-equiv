@@ -1,6 +1,6 @@
 #pragma once
 
-#include "equiv.hpp"
+#include "equiv_relation"
 
 namespace cpeq
 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "equiv.hpp"
-
 template<std::unsigned_integral T>
 struct eq_relation<T>::element
 {

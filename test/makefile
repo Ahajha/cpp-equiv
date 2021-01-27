@@ -1,12 +1,6 @@
-EQUIV=../include/equiv.hpp ../include/equiv.tpp
-HASH=../include/er_hash.hpp ../include/er_hash.tpp $(EQUIV)
-STORE=../include/er_store.hpp ../include/er_store.tpp $(HASH)
+all: test_er test_hash test_store
 
-test_er: test_er.cpp $(EQUIV)
-test_hash: test_hash.cpp $(HASH)
-test_store: test_store.cpp $(STORE)
-
-test_%:
-	g++ --std=c++20 -Wall -Wextra -Wpedantic $< -o $@
+test_%: test_%.cpp
+	g++ --std=c++20 -Wall -Wextra -Wpedantic -I ../include $< -o $@
 	./$@
 	rm ./$@

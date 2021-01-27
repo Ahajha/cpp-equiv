@@ -1,4 +1,3 @@
-#include "../include/equiv.hpp"
 #include "../include/er_hash.hpp"
 #include <iostream>
 #include <cassert>
