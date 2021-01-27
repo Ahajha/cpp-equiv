@@ -1,4 +1,4 @@
-#include "../include/er_store.hpp"
+#include <equiv_relation_store>
 
 int main()
 {

@@ -14,5 +14,5 @@ struct er_hash
 	std::size_t operator()(const eq_relation<T>&) const;
 };
 
-#include "er_hash.tpp"
+#include "tpp/equiv_relation_hash.tpp"
 }

@@ -1,7 +1,7 @@
-#include "../include/er_hash.hpp"
 #include <iostream>
 #include <cassert>
 #include <unordered_set>
+#include <equiv_relation_hash>
 
 int main()
 {

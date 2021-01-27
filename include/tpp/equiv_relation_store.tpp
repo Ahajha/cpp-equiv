@@ -1,7 +1,5 @@
 #pragma once
 
-#include "er_store.hpp"
-
 template<std::unsigned_integral T, std::unsigned_integral id_t>
 class _er_storage
 {
