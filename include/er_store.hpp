@@ -1,0 +1,28 @@
+#pragma once
+
+#include "er_hash.hpp"
+#include <unordered_map>
+
+namespace cpeq
+{
+/*
+Provides methods for internalizing and retrieving ERs. As ERs are internalized,
+IDs are assigned in increasing order, from 0. This is meant as a way to reduce
+memory usage, rather than acting as a set that can be interacted with.
+*/
+using default_id_t = uint32_t;
+
+// Gets the ID of an ER.
+template<std::unsigned_integral T = default_T, std::unsigned_integral id_t = default_id_t>
+id_t get_id(const eq_relation<T>& er);
+
+// Gets the ER associated with an ID.
+template<std::unsigned_integral T = default_T, std::unsigned_integral id_t = default_id_t>
+const eq_relation<T>& get_er(id_t id);
+
+// Clears all internalization data.
+template<std::unsigned_integral T = default_T, std::unsigned_integral id_t = default_id_t>
+void clear_storage();
+
+#include "er_store.tpp"
+}
