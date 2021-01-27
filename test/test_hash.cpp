@@ -18,9 +18,9 @@ int main()
 		
 		for (unsigned i = 0; i < set.bucket_count(); ++i)
 		{
-			std::cout << set.bucket_size(i) << '\n';
+			std::cout << set.bucket_size(i) << ' ';
 		}
 		
-		std::cout << '\n';
+		std::cout << "\n\n";
 	}
 }
