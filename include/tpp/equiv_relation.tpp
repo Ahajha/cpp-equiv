@@ -207,49 +207,34 @@ eq_relation<T> eq_relation<T>::operator-(std::size_t size) const
 template<std::unsigned_integral T>
 eq_relation<T>& eq_relation<T>::operator-=(std::size_t size)
 {
-	// Scan through the leaders of the elements being kept
-	const std::size_t new_size = elements.size() - size;
+	updateCGL();
 	
-	T i = 0;
-	for (; i < new_size; ++i)
+	std::vector<unsigned> leaders;
+	leaders.reserve(_n_groups);
+	
+	elements.resize(elements.size() - size);
+	cgl.resize(elements.size());
+	
+	for (element& elem : elements)
 	{
-		const T lead = leader(i);
-		
-		// If the leader is outside the new range, swap them so
-		// that the leader is within the range.
-		if (lead > new_size)
-		{
-			// Have the old leader point to the new one
-			elements[lead].boss = i;
-			
-			// Sets i to be its own leader as well as take n_group_members.
-			elements[i] = elements[lead];
-		}
+		// Clear the number of constituents
+		elem.n_group_members = 0;
 	}
 	
-	// Scan through the rest of the elements
-	for (; i < elements.size(); ++i)
+	for (unsigned i = 0; i < elements.size(); ++i)
 	{
-		const T lead = leader(i);
+		const unsigned group_num = cgl[i];
 		
-		// Reduce the number of elements from that leader
-		--elements[lead].n_group_members;
+		// If a new group is seen, mark i as the leader of this new group.
+		if (group_num == leaders.size()) leaders.emplace_back(i);
 		
-		// If the element is a leader, reduce the group count.
-		if (lead == i)
-		{
-			--_n_groups;
-		}
+		// Directly assign the leader as the boss of this element.
+		elements[i].boss = leaders[group_num];
+		
+		// Increment the number of group members for the leader of i.
+		++elements[leaders[group_num]].n_group_members;
 	}
 	
-	elements.resize(new_size);
-	
-	// If the CGL is up to date, it can easily be updated by
-	// truncating it. Otherwise, let it be regenerated normally.
-	if (!changed)
-	{
-		cgl.resize(new_size);
-	}
 	return *this;
 }
 
