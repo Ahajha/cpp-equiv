@@ -14,7 +14,7 @@ Only the contents of the /include folder are needed to use this library. The fil
 provides the base functionality
 
 ### equiv_relation_hash
-provides a has function for eq_relation
+provides a hash function for eq_relation
 
 ### equiv_relation_store
 provides means for storing and accessing equivalence relations in a central location, if many references to them are needed and memory is a concern.
